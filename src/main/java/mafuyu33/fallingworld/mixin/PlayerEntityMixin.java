@@ -45,8 +45,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
 	@Unique
 	private static final Set<Block> EXCLUDED_BLOCKS = new HashSet<>();
-	@Unique
-	private final Queue<BlockPos> taskQueue = new LinkedList<>();
 
 	static {
 		EXCLUDED_BLOCKS.add(Blocks.OBSIDIAN);
@@ -109,6 +107,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 	}
 	@Unique
 	private void fallingworld$generateFallingBlock(BlockPos targetPos ,BlockState blockState, World world) {
+		BlockEntity blockEntity = world.getBlockEntity(targetPos);
 
 		world.setBlockState(targetPos, Blocks.AIR.getDefaultState(), 3);
 
@@ -124,12 +123,10 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 		fallingBlockEntity.prevY = targetPos.getY();
 		fallingBlockEntity.prevZ = targetPos.getZ() + 0.5;
 		fallingBlockEntity.setFallingBlockPos(targetPos);
+
 		// 如果方块有附加的 BlockEntity 数据，可以设置 blockEntityData 字段
-		BlockEntity blockEntity = world.getBlockEntity(targetPos);
 		if (blockEntity != null) {
-			NbtCompound blockEntityData = new NbtCompound();
-			blockEntity.writeNbt(blockEntityData);
-			fallingBlockEntity.blockEntityData = blockEntityData;
+            fallingBlockEntity.blockEntityData = blockEntity.createNbtWithIdentifyingData();
 		}
 
 		world.spawnEntity(fallingBlockEntity);
