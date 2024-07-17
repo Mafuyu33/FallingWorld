@@ -107,8 +107,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 	}
 	@Unique
 	private void fallingworld$generateFallingBlock(BlockPos targetPos ,BlockState blockState, World world) {
-		if(!world.isClient()) {
-
 			BlockEntity blockEntity = world.getBlockEntity(targetPos);
 
 			world.setBlockState(targetPos, Blocks.AIR.getDefaultState(), 3);
@@ -132,7 +130,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 			}
 
 			world.spawnEntity(fallingBlockEntity);
-		}
 	}
 }
 
