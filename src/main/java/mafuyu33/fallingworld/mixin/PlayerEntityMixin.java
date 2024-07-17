@@ -107,30 +107,32 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 	}
 	@Unique
 	private void fallingworld$generateFallingBlock(BlockPos targetPos ,BlockState blockState, World world) {
-		BlockEntity blockEntity = world.getBlockEntity(targetPos);
+		if(!world.isClient()) {
 
-		world.setBlockState(targetPos, Blocks.AIR.getDefaultState(), 3);
+			BlockEntity blockEntity = world.getBlockEntity(targetPos);
 
-		FallingBlockEntity fallingBlockEntity = new FallingBlockEntity(EntityType.FALLING_BLOCK , world);
+			world.setBlockState(targetPos, Blocks.AIR.getDefaultState(), 3);
 
-		fallingBlockEntity.block = blockState;
-		fallingBlockEntity.timeFalling = 1;
-		fallingBlockEntity.setNoGravity(false);
-		fallingBlockEntity.intersectionChecked = true;
-		fallingBlockEntity.setPosition(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);
-		fallingBlockEntity.setVelocity(Vec3d.ZERO);
-		fallingBlockEntity.prevX = targetPos.getX() + 0.5;
-		fallingBlockEntity.prevY = targetPos.getY();
-		fallingBlockEntity.prevZ = targetPos.getZ() + 0.5;
-		fallingBlockEntity.setFallingBlockPos(targetPos);
+			FallingBlockEntity fallingBlockEntity = new FallingBlockEntity(EntityType.FALLING_BLOCK, world);
 
-		// 如果方块有附加的 BlockEntity 数据，可以设置 blockEntityData 字段
-		if (blockEntity != null) {
-            fallingBlockEntity.blockEntityData = blockEntity.createNbtWithIdentifyingData();
+			fallingBlockEntity.block = blockState;
+			fallingBlockEntity.timeFalling = 1;
+			fallingBlockEntity.setNoGravity(false);
+			fallingBlockEntity.intersectionChecked = true;
+			fallingBlockEntity.setPosition(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);
+			fallingBlockEntity.setVelocity(Vec3d.ZERO);
+			fallingBlockEntity.prevX = targetPos.getX() + 0.5;
+			fallingBlockEntity.prevY = targetPos.getY();
+			fallingBlockEntity.prevZ = targetPos.getZ() + 0.5;
+			fallingBlockEntity.setFallingBlockPos(targetPos);
+
+			// 如果方块有附加的 BlockEntity 数据，可以设置 blockEntityData 字段
+			if (blockEntity != null) {
+				fallingBlockEntity.blockEntityData = blockEntity.createNbtWithIdentifyingData();
+			}
+
+			world.spawnEntity(fallingBlockEntity);
 		}
-
-		world.spawnEntity(fallingBlockEntity);
-
 	}
 }
 
